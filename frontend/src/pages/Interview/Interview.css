@@ -1,0 +1,181 @@
+/* Interview.css - Professional Design System */
+.interview-bot-container {
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.interview-bot-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, var(--primary-900) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, var(--secondary-900) 0%, transparent 50%);
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Header Section */
+.interview-header {
+    position: relative;
+    z-index: 1;
+    padding: var(--space-6) var(--space-8);
+    background: var(--gradient-glass);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+}
+
+.interview-details {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.company-info {
+    display: flex;
+    gap: var(--space-8);
+    align-items: center;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    background: var(--panel);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+}
+
+.info-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent);
+}
+
+.info-icon {
+    font-size: var(--text-2xl);
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+.info-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.info-label {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    font-weight: var(--font-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.info-value {
+    font-size: var(--text-lg);
+    color: var(--text);
+    font-weight: var(--font-semibold);
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: var(--gradient-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-medium);
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-md);
+}
+
+.back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: white;
+    text-decoration: none;
+}
+
+.back-button:active {
+    transform: translateY(0);
+}
+
+/* Main Interview Interface */
+.interview-main {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-6) var(--space-8);
+    overflow: hidden;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .interview-details {
+        flex-direction: column;
+        gap: var(--space-6);
+        align-items: stretch;
+    }
+    
+    .company-info {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .back-button {
+        align-self: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .interview-header {
+        padding: var(--space-4) var(--space-4);
+    }
+    
+    .interview-main {
+        padding: var(--space-4) var(--space-4);
+    }
+    
+    .company-info {
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+    
+    .info-item {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .info-item {
+        padding: var(--space-3) var(--space-4);
+    }
+    
+    .info-icon {
+        font-size: var(--text-xl);
+    }
+    
+    .info-value {
+        font-size: var(--text-base);
+    }
+}

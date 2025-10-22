@@ -1,0 +1,80 @@
+.userInterview {
+    width: 70vw;
+    min-height: 20vh;
+    background: var(--gradient-card);
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-6);
+    margin: var(--space-4) 0;
+    transition: all var(--transition-normal);
+    position: relative;
+    z-index: 1;
+}
+
+.userInterview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.userInterview:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.userInterview:hover::before {
+    opacity: 1;
+}
+
+.performance {
+    width: 80%;
+    height: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-bottom: var(--space-4);
+}
+
+.performance h3, .feedback-container h3 {
+    color: var(--accent);
+    font-weight: var(--font-bold);
+    font-size: var(--text-lg);
+}
+
+.performance span {
+    color: var(--text);
+    font-weight: var(--font-semibold);
+}
+
+.feedback-container {
+    width: 80%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.feedback-container p {
+    text-align: center;
+    width: 100%;
+    font-weight: var(--font-semibold);
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+}
+
+.feedback-container h3 {
+    text-decoration: underline;
+    margin-bottom: var(--space-2);
+}

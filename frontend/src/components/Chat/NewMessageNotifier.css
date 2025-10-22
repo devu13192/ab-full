@@ -1,0 +1,5 @@
+.msg-toast{position:fixed;right:16px;bottom:16px;z-index:1000;background:#111827;color:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.2);min-width:240px;cursor:pointer}
+.msg-title{font-weight:700;margin-bottom:4px;color:#a5b4fc}
+.msg-from{font-weight:600;margin-bottom:2px}
+.msg-body{opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
+
