@@ -19,7 +19,7 @@ import Profile from "./pages/Profile/Profile";
 import Evaluation from "./pages/Evaluation/Evaluation";
 import PreInterview from "./pages/PreInterview/PreInterview";
 import Interview from "./pages/Interview/Interview";
-import Finish from "./pages/Finish/Finish";
+import EnhancedFinish from "./pages/Finish/EnhancedFinish";
 import Contact from "./pages/Contact/Contact";
 import About from "./pages/About/About";
 import ChatPage from "./pages/Chat/ChatPage";
@@ -75,7 +75,7 @@ export default function App() {
               <Route path="/notice" element={<Protected><NoticePage /></Protected>} />
               <Route path='/interview/:id' element={<Protected><PreInterview /></Protected>} />
               <Route path='/interview/:id/start' element={<Protected><Interview /></Protected>} />
-              <Route path='/interview/:id/finish' element={<Protected><Finish /></Protected>} />
+              <Route path='/interview/:id/finish' element={<Protected><EnhancedFinish /></Protected>} />
             </Routes>
             {/* Theme toggle removed for single-theme setup */}
           </div>

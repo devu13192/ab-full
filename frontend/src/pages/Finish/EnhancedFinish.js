@@ -9,11 +9,12 @@ import AIFeedback from '../../components/AIFeedback/AIFeedback';
 const EnhancedFinish = () => {
   const { user } = UserAuth();
   const location = useLocation();
+  const { id } = useParams();
   const queryParams = new URLSearchParams(location.search);
   const feedback = queryParams.get('feedback') || 'No feedback available';
-  const score = queryParams.get('score') || '0';
+  const score = parseInt(queryParams.get('score') || '0', 10);
   const rawScores = queryParams.get('scores');
-  const { id } = useParams();
+  const questionScoresData = queryParams.get('questionScores'); // New parameter for detailed scores
 
   const [intDetails, setIntDetails] = useState(null);
   const [isUserFetched, setIsUserFetched] = useState(false);
@@ -22,29 +23,57 @@ const EnhancedFinish = () => {
   const [interviewQuestions, setInterviewQuestions] = useState([]);
   const [interviewAnswers, setInterviewAnswers] = useState([]);
 
+  // Parse question scores data
+  const parsedQuestionScores = (() => {
+    try {
+      return JSON.parse(decodeURIComponent(questionScoresData || rawScores || '[]')) || [];
+    } catch (error) {
+      console.error('Error parsing question scores:', error);
+      return [];
+    }
+  })();
+
   const topicBreakdown = (() => {
     try {
-      const arr = JSON.parse(decodeURIComponent(rawScores || '')) || []
-      console.log('Raw scores array:', arr);
-      
-      const totals = {}
-      const counts = {}
-      for (const entry of arr) {
-        const [t, s] = String(entry).split(':')
-        const topic = (t || '').trim()
-        const val = Number(String(s || '').replace(/[^0-9]/g, '')) || 0
-        if (!topic) continue
-        totals[topic] = (totals[topic] || 0) + val
-        counts[topic] = (counts[topic] || 0) + 1
+      // Use the detailed question scores for breakdown
+      if (parsedQuestionScores.length > 0 && typeof parsedQuestionScores[0] === 'object') {
+        // New format: array of question score objects
+        const topicMap = {};
+        parsedQuestionScores.forEach(q => {
+          const topic = intDetails?.type || 'General';
+          if (!topicMap[topic]) topicMap[topic] = [];
+          topicMap[topic].push(q.score);
+        });
+
+        return Object.entries(topicMap).map(([topic, scores]) => ({
+          topic,
+          avg: Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length)
+        }));
+      } else {
+        // Fallback to old format
+        const arr = JSON.parse(decodeURIComponent(rawScores || '[]')) || []
+        console.log('Raw scores array:', arr);
+
+        const totals = {}
+        const counts = {}
+        for (const entry of arr) {
+          const [t, s] = String(entry).split(':')
+          const topic = (t || '').trim()
+          const val = Number(String(s || '').replace(/[^0-9]/g, '')) || 0
+          // Filter out undefined, empty, or invalid topics
+          if (!topic || topic === 'undefined' || topic === 'null' || topic.length === 0) continue
+          totals[topic] = (totals[topic] || 0) + val
+          counts[topic] = (counts[topic] || 0) + 1
+        }
+
+        const breakdown = Object.entries(totals).map(([topic, total]) => ({
+          topic,
+          avg: Math.round(total / (counts[topic] || 1))
+        }))
+
+        console.log('Topic breakdown:', breakdown);
+        return breakdown;
       }
-      
-      const breakdown = Object.entries(totals).map(([topic, total]) => ({
-        topic,
-        avg: Math.round(total / (counts[topic] || 1))
-      }))
-      
-      console.log('Topic breakdown:', breakdown);
-      return breakdown;
     } catch (error) {
       console.error('Error parsing topic breakdown:', error);
       return []
@@ -57,21 +86,25 @@ const EnhancedFinish = () => {
         const response = await axios.get(`/interview/${id}`);
         setIntDetails(response.data);
         setIsIntDetailsSet(true);
-        
-        // Extract questions and answers for AI feedback
-        if (response.data.questions) {
-          setInterviewQuestions(response.data.questions);
-        }
-        if (response.data.answers) {
-          setInterviewAnswers(response.data.answers);
+
+        // Extract questions and answers from question scores data
+        if (parsedQuestionScores.length > 0 && typeof parsedQuestionScores[0] === 'object') {
+          const questions = parsedQuestionScores.map(q => q.question);
+          const answers = parsedQuestionScores.map(q => q.userAnswer);
+          setInterviewQuestions(questions);
+          setInterviewAnswers(answers);
+          console.log('Extracted questions and answers from question scores:', { questions, answers });
+        } else if (response.data.questions) {
+          // Fallback to database questions
+          setInterviewQuestions(response.data.questions.map(q => q.question || q));
         }
       } catch (error) {
         console.error('Error fetching interview data:', error);
       }
     };
-    
+
     fetchInterviewData();
-  }, [id]);
+  }, [id, parsedQuestionScores]);
 
   useEffect(() => {
     if (user && isIntDetailsSet && !isUserFetched) {
@@ -153,6 +186,24 @@ const EnhancedFinish = () => {
           <h2>Feedback</h2>
           <p>{feedback}</p>
         </div>
+
+        {parsedQuestionScores.length > 0 && (
+          <div className="question-details">
+            <h3>Question-level ML Analysis</h3>
+            <ul>
+              {parsedQuestionScores.map((q, idx) => (
+                <li key={idx}>
+                  <strong>Q{idx + 1}:</strong> {q.question || 'N/A'}
+                  <div>Score: {Number(q.score).toFixed(1)}/5</div>
+                  <div>Fluency: {Number(q.fluencyScore || 0).toFixed(2)}</div>
+                  <div>Confidence (audio): {Number(q.audioConfidence || 0).toFixed(2)}</div>
+                  <div>Confidence (text): {Number(q.textConfidence || 0).toFixed(2)}</div>
+                  <div>Technical relevance: {Number(q.technicalRelevance || 0).toFixed(2)}</div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* AI-Powered Feedback Section */}
         <div className="ai-feedback-section">

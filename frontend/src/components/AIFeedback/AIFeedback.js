@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AIFeedback.css';
 
-const AIFeedback = ({ interviewId, questions, answers, company, position, topics }) => {
+const AIFeedback = ({ interviewId, questions, answers, company, position, interviewType }) => {
   const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -15,13 +15,14 @@ const AIFeedback = ({ interviewId, questions, answers, company, position, topics
       const response = await axios.post('http://localhost:5000/interview-feedback', {
         interviewData: {
           interviewId,
+          type: interviewType || 'General',
           timestamp: new Date().toISOString()
         },
         questions,
         answers,
         company: company || 'Google',
         position: position || 'Software Engineer',
-        topics: topics || ['Algorithms', 'Data Structures']
+        topics: [interviewType] || ['General']
       });
 
       setFeedback(response.data);
@@ -37,7 +38,7 @@ const AIFeedback = ({ interviewId, questions, answers, company, position, topics
     if (questions && answers && questions.length > 0 && answers.length > 0) {
       generateFeedback();
     }
-  }, [interviewId, questions, answers, company, position, topics]);
+  }, [interviewId, questions, answers, company, position, interviewType]);
 
   if (loading) {
     return (
@@ -75,7 +76,7 @@ const AIFeedback = ({ interviewId, questions, answers, company, position, topics
             {company} • {position} • AI Analysis
           </div>
         </div>
-
+        {console.log(feedback)}
         {feedback.topicBreakdown && Object.keys(feedback.topicBreakdown).length > 0 && (
           <div className="topic-breakdown">
             <h3>Topic-wise Breakdown</h3>
@@ -152,5 +153,7 @@ const AIFeedback = ({ interviewId, questions, answers, company, position, topics
 };
 
 export default AIFeedback;
+
+
 
 

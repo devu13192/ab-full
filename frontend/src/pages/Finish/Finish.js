@@ -24,7 +24,8 @@ const Finish = () => {
         const [t, s] = String(entry).split(':')
         const topic = (t || '').trim()
         const val = Number(String(s || '').replace(/[^0-9]/g, '')) || 0
-        if (!topic) continue
+        // Filter out undefined, empty, or invalid topics
+        if (!topic || topic === 'undefined' || topic === 'null' || topic.length === 0) continue
         totals[topic] = (totals[topic] || 0) + val
         counts[topic] = (counts[topic] || 0) + 1
       }

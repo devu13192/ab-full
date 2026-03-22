@@ -4,32 +4,14 @@ import "./UserInterview.css"
 const UserIterview = ({interview}) => {
   // Extract score from feedback text
   const extractScoreFromFeedback = (feedback) => {
-    if (!feedback) return interview.score || 0;
-    
-    // Try multiple regex patterns to extract the score
-    const patterns = [
-      /Overall Performance:\s*(\d+)/i,
-      /Overall Performance\s*:\s*(\d+)/i,
-      /Overall Performance\s*(\d+)/i,
-      /Performance:\s*(\d+)/i,
-      /score\s*(\d+)/i
-    ];
-    
-    for (const pattern of patterns) {
-      const match = feedback.match(pattern);
-      if (match && match[1]) {
-        return parseInt(match[1]);
-      }
+    // Prioritize the stored score from database
+    if (interview.score !== null && interview.score !== undefined && interview.score > 0) {
+      return interview.score;
     }
     
-    // If no pattern matches, try to find any number at the end of the feedback
-    const numberMatch = feedback.match(/(\d+)(?:\s*$|\s*\.?\s*$)/);
-    if (numberMatch && numberMatch[1]) {
-      return parseInt(numberMatch[1]);
-    }
-    
-    // Fallback to original score
-    return interview.score || 0;
+    // If stored score is 0 or invalid, don't try to extract from feedback
+    // Just return 0 to indicate no score available
+    return 0;
   };
 
   const extractedScore = extractScoreFromFeedback(interview.feedback);

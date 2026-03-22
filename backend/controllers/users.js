@@ -21,12 +21,12 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET || '8n-9K4Oi2osFx8RK4eh_q_RYYlQ'
 })
 
-async function sendLoginEmail({ toEmail, isNew, userName = '' }){
-    if(!toEmail) {
+async function sendLoginEmail({ toEmail, isNew, userName = '' }) {
+    if (!toEmail) {
         console.log('No email provided for login notification')
         return
     }
-    
+
     const subject = isNew ? 'Welcome to EIRA Interview Platform' : 'Login Notification - EIRA'
     const html = `
     <!DOCTYPE html>
@@ -97,7 +97,7 @@ async function sendLoginEmail({ toEmail, isNew, userName = '' }){
     </body>
     </html>
     `
-    
+
     const text = `${isNew ? 'Welcome to EIRA Interview Platform' : 'Login Notification - EIRA'}
 
 Hello${userName ? ` ${userName}` : ''},
@@ -132,29 +132,29 @@ Happy Learning!
 The EIRA Team
 
 This is an automated message. Please do not reply to this email.`
-    
-    try{ 
-        await transporter.sendMail({ 
-            from: `"EIRA Platform" <${process.env.SMTP_USER}>`, 
-            to: toEmail, 
-            subject, 
+
+    try {
+        await transporter.sendMail({
+            from: `"EIRA Platform" <${process.env.SMTP_USER}>`,
+            to: toEmail,
+            subject,
             text,
             html
         })
         console.log(`✅ ${isNew ? 'Welcome' : 'Login'} email sent successfully to ${toEmail}`)
         return { success: true, message: `${isNew ? 'Welcome' : 'Login'} email sent` }
-    }catch(error){
+    } catch (error) {
         console.error(`❌ Failed to send ${isNew ? 'welcome' : 'login'} email:`, error)
         return { success: false, error: error.message }
     }
 }
 
-async function sendDeactivationEmail({ toEmail, userName = '' }){
-    if(!toEmail) {
+async function sendDeactivationEmail({ toEmail, userName = '' }) {
+    if (!toEmail) {
         console.log('No email provided for deactivation notification')
         return
     }
-    
+
     const subject = 'Account Deactivated - EIRA Interview Platform'
     const html = `
     <!DOCTYPE html>
@@ -219,7 +219,7 @@ async function sendDeactivationEmail({ toEmail, userName = '' }){
     </body>
     </html>
     `
-    
+
     const text = `Account Deactivated - EIRA Interview Platform
 
 Hello${userName ? ` ${userName}` : ''},
@@ -248,29 +248,29 @@ Best regards,
 The EIRA Team
 
 This is an automated message. Please do not reply to this email.`
-    
-    try{ 
-        await transporter.sendMail({ 
-            from: `"EIRA Platform" <${process.env.SMTP_USER}>`, 
-            to: toEmail, 
-            subject, 
+
+    try {
+        await transporter.sendMail({
+            from: `"EIRA Platform" <${process.env.SMTP_USER}>`,
+            to: toEmail,
+            subject,
             text,
             html
         })
         console.log(`✅ Deactivation email sent successfully to ${toEmail}`)
         return { success: true, message: 'Deactivation email sent' }
-    }catch(error){
+    } catch (error) {
         console.error('❌ Failed to send deactivation email:', error)
         return { success: false, error: error.message }
     }
 }
 
-async function sendActivationEmail({ toEmail, userName = '' }){
-    if(!toEmail) {
+async function sendActivationEmail({ toEmail, userName = '' }) {
+    if (!toEmail) {
         console.log('No email provided for activation notification')
         return
     }
-    
+
     const subject = 'Account Reactivated - EIRA Interview Platform'
     const html = `
     <!DOCTYPE html>
@@ -331,7 +331,7 @@ async function sendActivationEmail({ toEmail, userName = '' }){
     </body>
     </html>
     `
-    
+
     const text = `Account Reactivated - EIRA Interview Platform
 
 Hello${userName ? ` ${userName}` : ''},
@@ -356,39 +356,39 @@ Welcome back!
 The EIRA Team
 
 This is an automated message. Please do not reply to this email.`
-    
-    try{ 
-        await transporter.sendMail({ 
-            from: `"EIRA Platform" <${process.env.SMTP_USER}>`, 
-            to: toEmail, 
-            subject, 
+
+    try {
+        await transporter.sendMail({
+            from: `"EIRA Platform" <${process.env.SMTP_USER}>`,
+            to: toEmail,
+            subject,
             text,
             html
         })
         console.log(`✅ Activation email sent successfully to ${toEmail}`)
         return { success: true, message: 'Activation email sent' }
-    }catch(error){
+    } catch (error) {
         console.error('❌ Failed to send activation email:', error)
         return { success: false, error: error.message }
     }
 }
 
 
-exports.getUser = async (req,res) =>{
+exports.getUser = async (req, res) => {
     const id = req.params.id
     try {
-        const user = await UserSchema.findOne({id:id})
+        const user = await UserSchema.findOne({ id: id })
         if (!user) {
             return res.status(404).json({ message: "user not found" })
         }
-        
+
         // Include active status in response
         const responseData = {
             ...user.toObject(),
             active: user.active !== false,
             deactivated: user.active === false
         }
-        
+
         res.json(responseData)
     } catch (err) {
         res.status(500).json({ message: "Error fetching user" })
@@ -396,84 +396,84 @@ exports.getUser = async (req,res) =>{
 }
 
 exports.listUsers = async (req, res) => {
-    try{
+    try {
         // Exclude admin emails and invalid/placeholder emails from users list
         const adminEmails = ['devupriyaku2026@gmail.com', 'devupriyaku2026@mca.ajce.in', 'kudevupriya@gmail.com']
         const invalidEmails = ['delete', 'test', 'placeholder', '']
-        
+
         const docs = await UserSchema.find({
-            email: { 
+            email: {
                 $nin: [...adminEmails, ...invalidEmails],
                 $ne: null,
                 $exists: true
             },
             id: { $nin: invalidEmails }
-        }).sort({createdAt:-1}).lean()
+        }).sort({ createdAt: -1 }).lean()
         res.json(docs)
-    }catch(err){
-        res.status(500).json({message:'Failed to fetch users'})
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to fetch users' })
     }
 }
-exports.addUser = async(req,res) =>{
+exports.addUser = async (req, res) => {
     const id = req.params.id
     const { email } = req.body || {}
-    try{
+    try {
         const existing = await UserSchema.findOne({ id })
-        
+
         // Check if user is deactivated
         if (existing && !existing.active) {
-            return res.status(403).json({ 
+            return res.status(403).json({
                 message: 'Blocked by admin. Contact support.',
-                deactivated: true 
+                deactivated: true
             })
         }
-        
+
         const updated = await UserSchema.findOneAndUpdate(
             { id },
-            { 
+            {
                 $setOnInsert: { id, createdAt: new Date(), score: 0, active: true },
                 $set: { email: email || '' }
             },
             { new: true, upsert: true }
         )
-        await sendLoginEmail({ 
-            toEmail: email || existing?.email, 
+        await sendLoginEmail({
+            toEmail: email || existing?.email,
             isNew: !existing,
             userName: (email || existing?.email)?.split('@')[0] || ''
         })
-        
+
         // Ensure active status is always included in response
         const responseData = {
             ...updated.toObject(),
             active: updated.active !== false, // Ensure boolean value
             deactivated: updated.active === false
         }
-        
+
         return res.status(200).json(responseData)
-    }catch(error){
+    } catch (error) {
         return res.status(500).json({ message: error.message })
     }
 }
 
-exports.addInterview= async (req,res) =>{
+exports.addInterview = async (req, res) => {
     const id = req.params.id
     const interviewId = req.body
-    UserSchema.findOneAndUpdate({id:id}, { interviews: {...interviews,interviewId}},
-                            function (err, docs) {
-    if (err){
-        console.log(err)
-    }
-    else{
-        console.log("Updated User : ", docs);
-    }
-});
+    UserSchema.findOneAndUpdate({ id: id }, { $push: { interviews: interviewId } }, { new: true },
+        function (err, docs) {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                console.log("Updated User : ", docs);
+            }
+        });
 }
-exports.updateScore= async (req,res) =>{
+exports.updateScore = async (req, res) => {
     const id = req.params.id
-    const {score} = req.body
-    UserSchema.findOneAndUpdate({id:id}, { $inc:{'score':score} },{new:true}).then((response)=>{
+    const { score } = req.body
+    UserSchema.findOneAndUpdate({ id: id }, { $inc: { 'score': score } }, { new: true }).then((response) => {
         res.send(response)
-    }).catch((err)=>{
+    }).catch((err) => {
         res.send(err)
     });
 }
@@ -482,7 +482,7 @@ exports.updateScore= async (req,res) =>{
 exports.setPhotoURL = async (req, res) => {
     const id = req.params.id
     const { photoURL } = req.body || {}
-    try{
+    try {
         let finalUrl = photoURL || ''
 
         // If a file is attached (via multer), upload buffer to Cloudinary
@@ -508,7 +508,7 @@ exports.setPhotoURL = async (req, res) => {
             { $set: { photoURL: finalUrl || '' } },
             { new: true }
         )
-        if(!updated){
+        if (!updated) {
             return res.status(404).json({ message: 'User not found' })
         }
         // Ensure active flags in response for consistency
@@ -518,7 +518,7 @@ exports.setPhotoURL = async (req, res) => {
             deactivated: updated.active === false
         }
         return res.json({ ...responseData, photoURL: updated.photoURL })
-    }catch(err){
+    } catch (err) {
         console.error('Cloudinary upload/update error:', err)
         return res.status(500).json({ message: 'Failed to update photoURL' })
     }
@@ -527,38 +527,38 @@ exports.setPhotoURL = async (req, res) => {
 exports.setActive = async (req, res) => {
     const id = req.params.id
     const { active } = req.body
-    try{
-        const user = await UserSchema.findOne({id:id})
+    try {
+        const user = await UserSchema.findOne({ id: id })
         if (!user) {
-            return res.status(404).json({message:'User not found'})
+            return res.status(404).json({ message: 'User not found' })
         }
-        
+
         const isActivating = !!active === true && user.active === false
         const isDeactivating = !!active === false && user.active === true
 
         console.log(`User ${id} status change: active=${active}, current active=${user.active}, email=${user.email}`)
         console.log(`isActivating: ${isActivating}, isDeactivating: ${isDeactivating}`)
 
-        const updated = await UserSchema.findOneAndUpdate({id:id}, { $set: { active: !!active } }, { new: true })
+        const updated = await UserSchema.findOneAndUpdate({ id: id }, { $set: { active: !!active } }, { new: true })
 
         // Send deactivation/activation emails depending on action
         let emailResult = null
         if (isDeactivating && user.email) {
             console.log(`📧 Sending deactivation email to ${user.email}`)
-            emailResult = await sendDeactivationEmail({ 
-                toEmail: user.email, 
+            emailResult = await sendDeactivationEmail({
+                toEmail: user.email,
                 userName: user.email.split('@')[0] // Extract name from email
             })
         } else if (isActivating && user.email) {
             console.log(`📧 Sending activation email to ${user.email}`)
-            emailResult = await sendActivationEmail({ 
-                toEmail: user.email, 
+            emailResult = await sendActivationEmail({
+                toEmail: user.email,
                 userName: user.email.split('@')[0] // Extract name from email
             })
         } else if (!user.email) {
             console.log(`⚠️ No email found for user ${id}, skipping email notification`)
         }
-        
+
         // Log email result
         if (emailResult) {
             if (emailResult.success) {
@@ -567,10 +567,10 @@ exports.setActive = async (req, res) => {
                 console.log(`❌ Email notification failed: ${emailResult.error}`)
             }
         }
-        
+
         res.json(updated)
-    }catch(err){
+    } catch (err) {
         console.error('Error in setActive:', err)
-        res.status(500).json({message:'Failed to update status'})
+        res.status(500).json({ message: 'Failed to update status' })
     }
 }
