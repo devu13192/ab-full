@@ -28,8 +28,15 @@ const DetailedFeedbackCard = ({ questionData, questionIndex }) => {
     similarity = 0
   } = questionData;
 
-  const avgConfidence = (audioConfidence + textConfidence) / 2;
-  const percentageScore = (score / maxScore) * 100;
+  const safeScore = score ?? 0;
+  const safeAudioConfidence = audioConfidence ?? 0;
+  const safeTextConfidence = textConfidence ?? 0;
+  const safeMaxScore = maxScore ?? 5;
+  const safeFluencyScore = fluencyScore ?? 0;
+  const safeTechnicalRelevance = technicalRelevance ?? 0;
+  const safeSimilarity = similarity ?? 0;
+  const avgConfidence = (safeAudioConfidence + safeTextConfidence) / 2;
+  const percentageScore = (safeScore / safeMaxScore) * 100;
 
   // Determine performance level and color
   const getPerformanceLevel = (value) => {
@@ -50,7 +57,7 @@ const DetailedFeedbackCard = ({ questionData, questionIndex }) => {
   const generateRecommendations = () => {
     const recommendations = [];
 
-    if (fluencyScore < 0.6) {
+    if (safeFluencyScore < 0.6) {
       recommendations.push({
         type: 'Fluency',
         icon: '🎤',
@@ -68,7 +75,7 @@ const DetailedFeedbackCard = ({ questionData, questionIndex }) => {
       });
     }
 
-    if (technicalRelevance < 0.6) {
+    if (safeTechnicalRelevance < 0.6) {
       recommendations.push({
         type: 'Technical Depth',
         icon: '🔧',
@@ -77,7 +84,7 @@ const DetailedFeedbackCard = ({ questionData, questionIndex }) => {
       });
     }
 
-    if (similarity < 0.6) {
+    if (safeSimilarity < 0.6) {
       recommendations.push({
         type: 'Answer Relevance',
         icon: '🎯',
@@ -86,7 +93,7 @@ const DetailedFeedbackCard = ({ questionData, questionIndex }) => {
       });
     }
 
-    if (similarity >= 0.8 && avgConfidence >= 0.8 && fluencyScore >= 0.8) {
+    if (safeSimilarity >= 0.8 && avgConfidence >= 0.8 && safeFluencyScore >= 0.8) {
       recommendations.push({
         type: 'Strengths',
         icon: '⭐',
@@ -99,7 +106,7 @@ const DetailedFeedbackCard = ({ questionData, questionIndex }) => {
   };
 
   const recommendations = generateRecommendations();
-  const scorePerformance = getPerformanceLevel(score / maxScore);
+  const scorePerformance = getPerformanceLevel(safeScore / safeMaxScore);
 
   // Metric rendering component
   const MetricRow = ({ label, icon, value, hasSubmetrics = false, submetrics = null, recommendation = null }) => {
@@ -156,9 +163,9 @@ const DetailedFeedbackCard = ({ questionData, questionIndex }) => {
         <div className="header-middle">
           <div
             className="score-badge"
-            style={{ backgroundColor: getScoreColor(score) }}
+            style={{ backgroundColor: getScoreColor(score ?? 0) }}
           >
-            <span className="score-value">{score.toFixed(1)}</span>
+            <span className="score-value">{(score ?? 0).toFixed(1)}</span>
             <span className="score-max">/ {maxScore}</span>
           </div>
         </div>
@@ -206,12 +213,12 @@ const DetailedFeedbackCard = ({ questionData, questionIndex }) => {
               <MetricRow
                 label="Overall Score"
                 icon="🎯"
-                value={score / maxScore}
+                value={safeScore / safeMaxScore}
               />
               <MetricRow
                 label="Fluency"
                 icon="🎤"
-                value={fluencyScore}
+                value={safeFluencyScore}
               />
               <MetricRow
                 label="Confidence"
@@ -226,12 +233,12 @@ const DetailedFeedbackCard = ({ questionData, questionIndex }) => {
               <MetricRow
                 label="Technical Relevance"
                 icon="🔧"
-                value={technicalRelevance}
+                value={safeTechnicalRelevance}
               />
               <MetricRow
                 label="Answer Relevance"
                 icon="🎯"
-                value={similarity}
+                value={safeSimilarity}
               />
             </div>
           </div>
