@@ -5,6 +5,8 @@ import './Finish.css';
 import { UserAuth } from '../../context/AuthContext';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AIFeedback from '../../components/AIFeedback/AIFeedback';
+import DetailedFeedbackCard from '../../components/DetailedFeedbackCard/DetailedFeedbackCard';
+import OverallPerformanceSummary from '../../components/OverallPerformanceSummary/OverallPerformanceSummary';
 
 const EnhancedFinish = () => {
   const { user } = UserAuth();
@@ -22,6 +24,7 @@ const EnhancedFinish = () => {
   const [showAIFeedback, setShowAIFeedback] = useState(false);
   const [interviewQuestions, setInterviewQuestions] = useState([]);
   const [interviewAnswers, setInterviewAnswers] = useState([]);
+  const [populatedQuestionScores, setPopulatedQuestionScores] = useState([]);
 
   // Parse question scores data
   const parsedQuestionScores = (() => {
@@ -86,6 +89,7 @@ const EnhancedFinish = () => {
         const response = await axios.get(`/interview/${id}`);
         setIntDetails(response.data);
         setIsIntDetailsSet(true);
+        console.log('Fetched interview details:', response.data);
 
         // Extract questions and answers from question scores data
         if (parsedQuestionScores.length > 0 && typeof parsedQuestionScores[0] === 'object') {
@@ -147,6 +151,29 @@ const EnhancedFinish = () => {
     document.title = 'Summary';
   }, []);
 
+  // Populate question scores with default values when parsedQuestionScores is empty
+  useEffect(() => {
+    if (parsedQuestionScores.length === 0 && intDetails?.questions && intDetails.questions.length > 0) {
+      const defaultScores = intDetails.questions.map((q, index) => ({
+        questionIndex: index,
+        question: q.question || '',
+        userAnswer: '',
+        expectedAnswer: q.answer || '',
+        score: 0,
+        maxScore: 5,
+        fluencyScore: 0,
+        textConfidence: 0,
+        audioConfidence: 0,
+        technicalRelevance: 0,
+        similarity: 0
+      }));
+      setPopulatedQuestionScores(defaultScores);
+      console.log('Populated question scores with default values:', defaultScores);
+    } else if (parsedQuestionScores.length > 0) {
+      setPopulatedQuestionScores(parsedQuestionScores);
+    }
+  }, [parsedQuestionScores, intDetails]);
+
   const handleGenerateAIFeedback = () => {
     setShowAIFeedback(true);
   };
@@ -186,22 +213,21 @@ const EnhancedFinish = () => {
           <h2>Feedback</h2>
           <p>{feedback}</p>
         </div>
+        {console.log('Parsed question scores for detailed feedback:', populatedQuestionScores)}
+        <OverallPerformanceSummary questionScores={populatedQuestionScores} />
 
-        {parsedQuestionScores.length > 0 && (
+        {populatedQuestionScores.length > 0 && (
           <div className="question-details">
-            <h3>Question-level ML Analysis</h3>
-            <ul>
-              {parsedQuestionScores.map((q, idx) => (
-                <li key={idx}>
-                  <strong>Q{idx + 1}:</strong> {q.question || 'N/A'}
-                  <div>Score: {Number(q.score).toFixed(1)}/5</div>
-                  <div>Fluency: {Number(q.fluencyScore || 0).toFixed(2)}</div>
-                  <div>Confidence (audio): {Number(q.audioConfidence || 0).toFixed(2)}</div>
-                  <div>Confidence (text): {Number(q.textConfidence || 0).toFixed(2)}</div>
-                  <div>Technical relevance: {Number(q.technicalRelevance || 0).toFixed(2)}</div>
-                </li>
+            <h3>📊 Detailed Performance Analysis - Question-by-Question Breakdown</h3>
+            <div className="detailed-feedback-container">
+              {populatedQuestionScores.map((q, idx) => (
+                <DetailedFeedbackCard 
+                  key={idx}
+                  questionData={q}
+                  questionIndex={idx}
+                />
               ))}
-            </ul>
+            </div>
           </div>
         )}
 

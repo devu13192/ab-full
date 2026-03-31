@@ -253,22 +253,24 @@ const SpeechRecognition = ({ setBotTalking, botTalking }) => {
         return newScores;
       });
 
+      // Determine next index up front so hooks/logic is fully correct
+      const newIndex = index + 1;
+
       // Store detailed question scores for feedback
       setQuestionScores((prev) => {
         const newScores = [...prev, questionScore];
-        
+
         // Check if this was the last question
         if (newIndex >= questions.length) {
           // Automatically get feedback when all questions are done
           // Use the updated scores array
           setTimeout(() => getFeedback(newScores), 0);
         }
-        
+
         return newScores;
       });
 
-      // Update index and check if this was the last question
-      const newIndex = index + 1;
+      // Update index and continue
       setIndex(newIndex);
       setAnswer('');
 
@@ -292,20 +294,20 @@ const SpeechRecognition = ({ setBotTalking, botTalking }) => {
         maxScore: 5
       };
 
+      const newIndex = index + 1;
       setScores((prevScores) => [...prevScores, scoreString]);
       setQuestionScores((prev) => {
         const newScores = [...prev, questionScore];
-        
+
         // Check if this was the last question
         if (newIndex >= questions.length) {
           // Automatically get feedback when all questions are done
           setTimeout(() => getFeedback(newScores), 0);
         }
-        
+
         return newScores;
       });
 
-      const newIndex = index + 1;
       setIndex(newIndex);
       setAnswer('');
 
@@ -637,9 +639,15 @@ const SpeechRecognition = ({ setBotTalking, botTalking }) => {
         }
       }
       
-      // No default score - keep as 0 out of 100 if no scores available
+      // If still no score, use 0 instead of default values
+      if (calculatedScore === 0) {
+        calculatedScore = 0; // No default score - keep as 0 out of 100
+      }
       
-      const fallbackFeedback = `Thank you for completing the interview. Your responses have been recorded and will be evaluated by our team. Overall Performance: ${calculatedScore}`;
+      let fallbackFeedback = `Thank you for completing the interview. Your responses have been recorded and will be evaluated by our team.`;
+      // if (calculatedScore > 0) {
+      //   fallbackFeedback += ` Overall Performance: ${calculatedScore}`;
+      // }
       const encodedScores = encodeURIComponent(JSON.stringify(scores || []));
       navigate(`/interview/${id}/finish?feedback=${encodeURIComponent(fallbackFeedback)}&score=${calculatedScore}&scores=${encodedScores}`);
       setScoreload(false);
@@ -654,19 +662,39 @@ const SpeechRecognition = ({ setBotTalking, botTalking }) => {
 
     console.log(`Overall: ${totalObtainedMarks}/${totalPossibleMarks} marks (${overallPercentage}%)`);
 
-    // Create detailed feedback message with question-by-question analysis
-    const feedbackMessage = `Interview Performance Analysis:
+    // Create detailed feedback message with question-by-question analysis and ML metrics
+    const feedbackMessage = `Interview Performance Analysis - ML-Based Assessment:
 
 Total Questions: ${totalQuestions}
 Total Marks Obtained: ${totalObtainedMarks.toFixed(1)}/${totalPossibleMarks}
 Overall Percentage: ${overallPercentage}%
 
-Question-by-Question Breakdown:
-${currentQuestionScores.map((q, idx) => `Q${idx + 1}: ${q.score.toFixed(1)}/5 - ${q.question.substring(0, 50)}...`).join('\n')}
+📊 Detailed Question-by-Question Breakdown:
+${currentQuestionScores.map((q, idx) => {
+  const avgConfidence = ((q.audioConfidence || 0) + (q.textConfidence || 0)) / 2;
+  return `Q${idx + 1}: ${q.score.toFixed(1)}/5 - ${q.question.substring(0, 40)}...
+  • Fluency: ${(q.fluencyScore * 100).toFixed(0)}%
+  • Confidence: ${(avgConfidence * 100).toFixed(0)}%
+  • Technical Relevance: ${(q.technicalRelevance * 100).toFixed(0)}%
+  • Answer Relevance: ${(q.similarity * 100).toFixed(0)}%`;
+}).join('\n\n')}
 
-Please provide detailed feedback on the candidate's performance, highlighting strengths and areas for improvement. Focus on technical accuracy, communication skills, and problem-solving approach. Give specific suggestions for improvement.
+🎯 ML-Derived Performance Insights:
+• Average Fluency Score: ${((currentQuestionScores.reduce((sum, q) => sum + (q.fluencyScore || 0), 0) / totalQuestions) * 100).toFixed(0)}%
+• Average Confidence Level: ${((currentQuestionScores.reduce((sum, q) => sum + ((q.audioConfidence || 0) + (q.textConfidence || 0)) / 2, 0) / totalQuestions) * 100).toFixed(0)}%
+• Average Technical Depth: ${((currentQuestionScores.reduce((sum, q) => sum + (q.technicalRelevance || 0), 0) / totalQuestions) * 100).toFixed(0)}%
+• Average Answer Relevance: ${((currentQuestionScores.reduce((sum, q) => sum + (q.similarity || 0), 0) / totalQuestions) * 100).toFixed(0)}%
 
-Overall Performance: ${overallPercentage}`;
+📝 Interview Type: ${interviewType || 'General'}
+
+Please provide comprehensive feedback on the candidate's performance based on the ML analysis above:
+1. Summarize overall strengths and weaknesses
+2. Provide specific feedback for areas with low scores
+3. Give actionable recommendations for improvement
+4. Highlight areas of excellence
+5. Suggest focused practice areas based on the technical relevance scores
+
+Focus on all ML metrics: fluency, confidence, technical knowledge, and answer relevance.`;
 
     const options = {
         method: 'POST',
@@ -694,9 +722,9 @@ Overall Performance: ${overallPercentage}`;
 
         console.log('Raw AI feedback received:', feedback);
 
-        // Use 0 as the final score instead of calculated percentage
-        let finalScore = 0;
-        console.log('Using 0 as final score instead of calculated percentage:', finalScore);
+        // Use the calculated overall percentage as the final score - ALWAYS use this
+        let finalScore = overallPercentage;
+        console.log('Using calculated overall score:', finalScore);
         
         // Try to get AI feedback, but don't let it override our calculated score
         let aiFeedback = feedback;
