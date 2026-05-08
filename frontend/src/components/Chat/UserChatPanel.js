@@ -1,14 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ChatWindow from './ChatWindow';
 import './MentorChatPanel.css';
 import { UserAuth } from '../../context/AuthContext';
 import io from 'socket.io-client';
 
 import API_BASE_URL from '../../apiConfig';
-
-const getSocketUrl = () => {
-    return API_BASE_URL;
-};
 
 export default function UserChatPanel(){
 	const { user } = UserAuth();
@@ -46,7 +42,7 @@ export default function UserChatPanel(){
 	// Realtime updates for preview; do not auto-open
 	useEffect(() => {
 		if (!roomId) return;
-		if (!socketRef.current) socketRef.current = io(getSocketUrl(), { transports: ['websocket','polling'] });
+		if (!socketRef.current) socketRef.current = io(API_BASE_URL, { transports: ['websocket','polling'] });
 		const socket = socketRef.current;
 		socket.emit('join', { roomId, userEmail });
 		const onMessage = (m) => {

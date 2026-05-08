@@ -51,6 +51,7 @@ export const AuthContextProvider = ({ children }) => {
                         await signOut(auth);
                         setDeactivatedUserEmail(currentUser.email || '');
                         setShowDeactivationAlert(true);
+                        setAuthLoading(false);
                         return;
                     }
                 } catch (error) {
@@ -58,6 +59,7 @@ export const AuthContextProvider = ({ children }) => {
                         await signOut(auth);
                         setDeactivatedUserEmail(currentUser.email || '');
                         setShowDeactivationAlert(true);
+                        setAuthLoading(false);
                         return;
                     }
                     console.error("Failed to send user data:", error.message);
