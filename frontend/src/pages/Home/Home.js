@@ -41,12 +41,16 @@ const Home = () => {
     document.title = 'Dashboard'
     axios.get(`${API_BASE_URL}/interview`)
       .then(response => {
+        console.log('Successfully fetched interviews:', response.data);
         setInterviewList(response.data)
         setInterviews(response.data)
-        setLoading(false)
       })
       .catch(error => {
-        console.log(error);
+        console.error('Failed to fetch interviews from:', `${API_BASE_URL}/interview`);
+        console.error('Error details:', error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
     // fetch active ads
     axios.get(`${API_BASE_URL}/ads`)
