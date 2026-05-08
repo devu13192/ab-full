@@ -5,7 +5,7 @@ import axios from 'axios';
 // In production, it uses the hardcoded Render URL.
 const API_BASE_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:5000'
-  : 'https://ab-full.onrender.com';
+  : 'https://ab-full-hvzk.onrender.com';
 
 // Configure axios defaults
 axios.defaults.baseURL = API_BASE_URL;

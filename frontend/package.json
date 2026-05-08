@@ -44,7 +44,7 @@
     "test": "craco test",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://ab-full.onrender.com",
+  "proxy": "https://ab-full-hvzk.onrender.com",
   "eslintConfig": {
     "extends": [
       "react-app",
