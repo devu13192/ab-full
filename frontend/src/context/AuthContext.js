@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 import axios from "axios";
+import API_BASE_URL from "../apiConfig";
 import DeactivationAlert from "../components/Alert/DeactivationAlert";
 
 const AuthContext = createContext();
@@ -44,7 +45,7 @@ export const AuthContextProvider = ({ children }) => {
                 console.log("Provider data:", currentUser.providerData?.[0] || "No provider data");
 
                 try {
-                    const response = await axios.post(`/user/${currentUser.uid}`, { email: currentUser.email || '' });
+                    const response = await axios.post(`${API_BASE_URL}/user/${currentUser.uid}`, { email: currentUser.email || '' });
                     // Check if user is deactivated
                     if (response.data.deactivated || !response.data.active) {
                         await signOut(auth);

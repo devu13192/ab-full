@@ -28,11 +28,14 @@ const DeactivationAlert = ({ open, onClose, userEmail }) => {
     return (
         <Dialog 
             open={open} 
-            onClose={onClose}
+            onClose={(event, reason) => {
+                if (reason !== 'backdropClick') {
+                    onClose();
+                }
+            }}
             maxWidth="sm"
             fullWidth
             disableEscapeKeyDown
-            disableBackdropClick
         >
             <DialogTitle className="deactivation-dialog-title">
                 <Box display="flex" alignItems="center" justifyContent="space-between">
