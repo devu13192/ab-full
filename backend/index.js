@@ -29,7 +29,7 @@ app.use("/ads", adRoutes)
 app.use("/chat", chatRoutes)
 
 // Initialize Google Generative AI
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "AIzaSyAtKhIeqFIWlLjPakicIRy3vpH9bbZrEu8");
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 // Health ping for frontend latency checks
 app.get('/ping', (req, res) => {

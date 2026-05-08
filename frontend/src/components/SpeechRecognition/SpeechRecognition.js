@@ -21,9 +21,7 @@ import {
 } from '@mui/icons-material';
 import LoadingComponent from '../../components/LoadingComponent/LoadingComponent';
 
-// Import TensorFlow.js and Speech Commands for ML enhancement
-import * as tf from '@tensorflow/tfjs';
-import * as speechCommands from '@tensorflow-models/speech-commands';
+// TensorFlow.js and Speech Commands will be loaded dynamically to improve performance
 
 const SpeechRecognition = ({ setBotTalking, botTalking }) => {
   // ... existing state variables ...
@@ -40,6 +38,13 @@ const SpeechRecognition = ({ setBotTalking, botTalking }) => {
   useEffect(() => {
     const loadModel = async () => {
       try {
+        setMlStatus('loading');
+        // Dynamic imports for heavy libraries
+        const [tf, speechCommands] = await Promise.all([
+          import('@tensorflow/tfjs'),
+          import('@tensorflow-models/speech-commands')
+        ]);
+        
         const recognizer = speechCommands.create('BROWSER_FFT');
         await recognizer.ensureModelLoaded();
         setMlModel(recognizer);

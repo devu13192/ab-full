@@ -789,7 +789,7 @@ const ManageAds = () => {
                                             <div key={ad._id} className={`ad-card ${!ad.active ? 'inactive' : ''}`}>
                                                 {ad.imageUrl && (
                                                     <div className="ad-image">
-                                                        <img src={ad.imageUrl} alt={ad.title} />
+                                                        <img src={ad.imageUrl} alt={ad.title} loading="lazy" />
                                                     </div>
                                                 )}
                                                 <div className="ad-content">

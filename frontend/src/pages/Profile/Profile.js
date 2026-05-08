@@ -491,6 +491,7 @@ useEffect(()=>{
                   <img 
                     src={userData?.photoURL || auth.currentUser?.photoURL || user?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.displayName || user?.email?.split('@')[0] || 'User')}&size=120&background=6366f1&color=ffffff&bold=true`} 
                     alt={user?.displayName || 'User'} 
+                    loading="lazy"
                     onError={(e) => {
                       console.log('Image failed to load, using fallback');
                       setImageError(true);

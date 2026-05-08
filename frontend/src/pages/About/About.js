@@ -215,8 +215,8 @@ const About = () => {
                   <div className="stat-icon" style={{ color: stat.color }}>
                     {stat.icon}
                   </div>
-                  <h3>{stat.title}</h3>
-                  <p>{stat.subtitle}</p>
+                  <h3 style={{ color: 'white' }}>{stat.title}</h3>
+                  <p style={{ color: 'white' }}>{stat.subtitle}</p>
                 </motion.div>
               ))}
             </div>

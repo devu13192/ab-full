@@ -6,57 +6,12 @@ const mongoose = require("mongoose")
 
 
 exports.getInterviews = async (req,res) =>{
-    
-    const data = await InterviewSchema.find();
-    
-    // Log existing types for debugging
-    const existingTypes = [...new Set(data.map(interview => interview.type).filter(Boolean))];
-    console.log('Existing interview types in database:', existingTypes);
-    
-    // Migrate existing interviews that don't have difficulty field
-    const interviewsToUpdate = data.filter(interview => !interview.difficulty);
-    if (interviewsToUpdate.length > 0) {
-        console.log(`Migrating ${interviewsToUpdate.length} interviews to add difficulty field`);
-        try {
-            await InterviewSchema.updateMany(
-                { difficulty: { $exists: false } },
-                { $set: { difficulty: 'Medium' } }
-            );
-            console.log('Difficulty migration completed successfully');
-        } catch (error) {
-            console.error('Difficulty migration failed:', error);
-        }
-    }
-    
-    // Automatic cleanup of orphaned user interviews (runs periodically)
     try {
-        const existingInterviews = await InterviewSchema.find({}, 'company role');
-        const validCombinations = new Set();
-        existingInterviews.forEach(interview => {
-            validCombinations.add(`${interview.company}|${interview.role}`);
-        });
-        
-        const orphanedUserInterviews = await UserInterviewSchema.find({});
-        const toDelete = orphanedUserInterviews.filter(userInterview => {
-            const combination = `${userInterview.company}|${userInterview.role}`;
-            return !validCombinations.has(combination);
-        });
-        
-        if (toDelete.length > 0) {
-            console.log(`Auto-cleanup: Found ${toDelete.length} orphaned user interviews`);
-            const deletePromises = toDelete.map(userInterview => 
-                UserInterviewSchema.findByIdAndDelete(userInterview._id)
-            );
-            await Promise.all(deletePromises);
-            console.log(`Auto-cleanup: Removed ${toDelete.length} orphaned user interviews`);
-        }
+        const data = await InterviewSchema.find().sort({ count: -1 });
+        res.status(200).send(data);
     } catch (error) {
-        console.error('Auto-cleanup error:', error);
+        res.status(500).json({ message: error.message });
     }
-    
-    // Fetch updated data
-    const updatedData = await InterviewSchema.find();
-    res.send(updatedData)
 }
 // Server-side validation functions
 const isValidCompany = (company) => {
