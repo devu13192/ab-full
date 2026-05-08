@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
 import './ChatWindow.css';
+import API_BASE_URL from '../../apiConfig';
 import { UserAuth } from '../../context/AuthContext';
 import { 
 	AttachFile, 
@@ -16,14 +17,8 @@ import {
 } from '@mui/icons-material';
 
 const getBackendUrl = () => {
-	// Point socket to backend (assumes backend on 5000 during dev)
-	try {
-		const { protocol, hostname } = window.location
-		return `${protocol}//${hostname}:5000`
-	} catch {
-		return ''
-	}
-}
+    return API_BASE_URL;
+};
 
 export default function ChatWindow({ roomId, peerLabel, recipientEmail }){
 	const { user } = UserAuth();
@@ -118,7 +113,7 @@ export default function ChatWindow({ roomId, peerLabel, recipientEmail }){
 	useEffect(() => {
 		const email = user?.email || 'anonymous@copypro.local';
 		socket.emit('join', { roomId, userEmail: email });
-		fetch(`/chat/history/${encodeURIComponent(roomId)}?limit=100`).then(r=>r.json()).then(setMessages).catch(()=>{});
+		fetch(`${API_BASE_URL}/chat/history/${encodeURIComponent(roomId)}?limit=100`).then(r=>r.json()).then(setMessages).catch(()=>{});
 
 		const onMessage = (msg) => setMessages(prev => {
 			// If this is a server-confirmed upload and we have a matching optimistic item, drop one optimistic
@@ -174,7 +169,7 @@ export default function ChatWindow({ roomId, peerLabel, recipientEmail }){
 		const senderEmail = user?.email || 'anonymous@copypro.local';
 		const to = recipientEmail;
 		// Send via HTTP (server will emit to room)
-		try { await axios.post('/chat/send', { roomId, content, senderEmail, recipientEmail: to }) } catch {}
+		try { await axios.post(`${API_BASE_URL}/chat/send`, { roomId, content, senderEmail, recipientEmail: to }) } catch {}
 		setText('');
 	};
 
@@ -245,7 +240,7 @@ export default function ChatWindow({ roomId, peerLabel, recipientEmail }){
 			formData.append('senderEmail', user?.email || 'anonymous@copypro.local');
 			formData.append('recipientEmail', recipientEmail);
 
-			const response = await axios.post('/chat/upload', formData, {
+			const response = await axios.post(`${API_BASE_URL}/chat/upload`, formData, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 				onUploadProgress: (progressEvent) => {
 					const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -357,7 +352,7 @@ export default function ChatWindow({ roomId, peerLabel, recipientEmail }){
 			formData.append('senderEmail', user?.email || 'anonymous@copypro.local');
 			formData.append('recipientEmail', recipientEmail);
 
-			const response = await axios.post('/chat/upload', formData, {
+			const response = await axios.post(`${API_BASE_URL}/chat/upload`, formData, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 				onUploadProgress: (progressEvent) => {
 					const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);

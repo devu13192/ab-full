@@ -4,9 +4,11 @@ import './MentorChatPanel.css';
 import { UserAuth } from '../../context/AuthContext';
 import io from 'socket.io-client';
 
-const getBackendUrl = () => {
-	try { const { protocol, hostname } = window.location; return `${protocol}//${hostname}:5000` } catch { return '' }
-}
+import API_BASE_URL from '../../apiConfig';
+
+const getSocketUrl = () => {
+    return API_BASE_URL;
+};
 
 export default function UserChatPanel(){
 	const { user } = UserAuth();

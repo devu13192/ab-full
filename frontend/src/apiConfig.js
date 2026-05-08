@@ -4,7 +4,7 @@ import axios from 'axios';
 // In development, it uses the proxy from package.json or localhost.
 // In production, it uses the hardcoded Render URL.
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://ab-full-hvzk.onrender.com' 
+  ? 'https://ab-full.onrender.com' 
   : ''; // Use empty string to leverage the CRA proxy in development
 
 // Configure axios defaults
