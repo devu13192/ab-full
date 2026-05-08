@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import "./Contact.css";
+import API_BASE_URL from '../../apiConfig';
 import ProfessionalNavbar from "../../components/Navbar/ProfessionalNavbar";
 
 const Contact = () => {
@@ -438,8 +439,8 @@ const Contact = () => {
     setSubmitMessage('');
     
     try {
-      console.log('Sending request to:', 'http://localhost:5000/api/contacts');
-      const response = await axios.post('http://localhost:5000/api/contacts', formData);
+      console.log('Sending request to:', `${API_BASE_URL}/api/contacts`);
+      const response = await axios.post(`${API_BASE_URL}/api/contacts`, formData);
       
       if (response.data.success) {
         setSubmitStatus('success');

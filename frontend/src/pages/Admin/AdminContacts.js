@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import './AdminContacts.css';
+import API_BASE_URL from '../../apiConfig';
 import { 
   Email, 
   Phone, 
@@ -67,7 +68,7 @@ const AdminContacts = () => {
   const fetchContacts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/contacts');
+      const response = await axios.get(`${API_BASE_URL}/api/contacts`);
       if (response.data.success) {
         setContacts(response.data.data || []);
         // store count for potential notification badge usage
@@ -87,7 +88,7 @@ const AdminContacts = () => {
   const updateContactStatus = async (contactId, newStatus) => {
     try {
       setUpdating(contactId);
-      const response = await axios.patch(`http://localhost:5000/api/contacts/${contactId}/status`, {
+      const response = await axios.patch(`${API_BASE_URL}/api/contacts/${contactId}/status`, {
         status: newStatus
       });
       if (response.data.success) {
@@ -123,7 +124,7 @@ const AdminContacts = () => {
   const deleteContact = async (contactId) => {
     try {
       setUpdating(contactId);
-      const response = await axios.delete(`http://localhost:5000/api/contacts/${contactId}`);
+      const response = await axios.delete(`${API_BASE_URL}/api/contacts/${contactId}`);
       if (response.data.success) {
         setContacts(prev => prev.filter(c => c._id !== contactId));
         setBanner({ type: 'success', message: 'Contact deleted.' });
@@ -451,7 +452,7 @@ const AdminContacts = () => {
                   for (const id of confirm.ids) await updateContactStatus(id, 'contacted');
                 } else {
                   try {
-                    await axios.post('http://localhost:5000/api/contacts/bulk/delete', { ids: confirm.ids });
+                    await axios.post(`${API_BASE_URL}/api/contacts/bulk/delete`, { ids: confirm.ids });
                     setContacts(prev => prev.filter(c => !confirm.ids.includes(c._id)));
                     setBanner({ type:'success', message: 'Selected contacts deleted.' });
                     setTimeout(()=> setBanner(null), 2000);
@@ -539,7 +540,7 @@ const AdminContacts = () => {
               <button className="btn-primary" disabled={sending} onClick={async ()=>{
                 try{
                   setSending(true);
-                  await axios.post(`http://localhost:5000/api/contacts/${replyTo._id}/reply`, { subject: replySubject, message: replyText });
+                  await axios.post(`${API_BASE_URL}/api/contacts/${replyTo._id}/reply`, { subject: replySubject, message: replyText });
                   setContacts(prev => prev.map(c => c._id===replyTo._id ? { ...c, lastEmailAt: new Date().toISOString(), status: 'contacted' } : c));
                   setBanner({ type:'success', message:'Email sent successfully.' });
                 }catch(err){

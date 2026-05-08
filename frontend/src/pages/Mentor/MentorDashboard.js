@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../../context/AuthContext';
 import './Mentor.css';
+import API_BASE_URL from '../../apiConfig';
 import NewMessageNotifier from '../../components/Chat/NewMessageNotifier';
 
 const MentorDashboard = () => {
@@ -31,7 +32,7 @@ const MentorDashboard = () => {
         try {
             // For now, we'll use the user's email to identify the mentor
             // In a real implementation, you'd have a separate mentor authentication
-            const response = await fetch('/mentor');
+            const response = await fetch(`${API_BASE_URL}/mentor`);
             if (response.ok) {
                 const mentors = await response.json();
                 const currentMentor = mentors.find(mentor => 
@@ -49,7 +50,7 @@ const MentorDashboard = () => {
 
     const fetchAds = async () => {
         try {
-            const res = await fetch('/ads/all');
+            const res = await fetch(`${API_BASE_URL}/ads/all`);
             if (res.ok) {
                 const list = await res.json();
                 setAds(list || []);

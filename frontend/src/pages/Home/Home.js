@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import ProfessionalNavbar from '../../components/Navbar/ProfessionalNavbar'
 import axios from "axios"
 import "./Home.css"
+import API_BASE_URL from '../../apiConfig'
 import LoadingComponent from '../../components/LoadingComponent/LoadingComponent'
 import Footer from '../../components/Footer/Footer'
 import { 
@@ -38,7 +39,7 @@ const Home = () => {
 
   useEffect(() => {
     document.title = 'Dashboard'
-    axios.get('/interview')
+    axios.get(`${API_BASE_URL}/interview`)
       .then(response => {
         setInterviewList(response.data)
         setInterviews(response.data)
@@ -48,7 +49,7 @@ const Home = () => {
         console.log(error);
       });
     // fetch active ads
-    axios.get('/ads')
+    axios.get(`${API_BASE_URL}/ads`)
       .then(res => setAds(res.data || []))
       .catch(()=>{})
   }, [])

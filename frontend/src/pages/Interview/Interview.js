@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import axios from 'axios'
 import "./Interview.css"
+import API_BASE_URL from '../../apiConfig'
 import SpeechRecognition from '../../components/SpeechRecognition/SpeechRecognition'
 import { Business, Work, ArrowBack } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
@@ -14,7 +15,7 @@ const Interview = () => {
     
     useEffect(() => {
         document.title = "EIRA - Mock Interview"
-        axios.get(`/interview/${id}`)
+        axios.get(`${API_BASE_URL}/interview/${id}`)
             .then(response => {
                 setDetails(response.data)
             })

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../../context/AuthContext';
 import AdminContacts from './AdminContacts';
 import './Admin.css';
+import API_BASE_URL from '../../apiConfig';
 // Removed framer-motion and react-icons to avoid dependency issues
 // Charts remain via recharts
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -88,7 +89,7 @@ const Admin = () => {
         let timer;
         const fetchNewContacts = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/contacts');
+                const res = await fetch(`${API_BASE_URL}/api/contacts`);
                 if (!res.ok) return;
                 const json = await res.json();
                 const list = (json?.data || []).filter(c => c.status === 'new').sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
@@ -152,7 +153,7 @@ const Admin = () => {
 
     const fetchInterviews = async () => {
         try {
-            const response = await fetch('/interview');
+            const response = await fetch(`${API_BASE_URL}/interview`);
             if (response.ok) {
                 const data = await response.json();
                 setInterviews(data);
@@ -175,7 +176,7 @@ const Admin = () => {
     const fetchUsers = async () => {
         setUsersLoading(true);
         try {
-            const res = await fetch('/user');
+            const res = await fetch(`${API_BASE_URL}/user`);
             if (res.ok) {
                 const data = await res.json();
                 setUsers(data || []);
@@ -190,7 +191,7 @@ const Admin = () => {
     const fetchMentors = async () => {
         setMentorsLoading(true);
         try {
-            const res = await fetch('/mentor');
+            const res = await fetch(`${API_BASE_URL}/mentor`);
             if (res.ok) {
                 const data = await res.json();
                 setMentors(data || []);
@@ -204,7 +205,7 @@ const Admin = () => {
 
     const toggleUserActive = async (userId, nextActive) => {
         try {
-            const res = await fetch(`/user/active/${encodeURIComponent(userId)}`, {
+            const res = await fetch(`${API_BASE_URL}/user/active/${encodeURIComponent(userId)}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ active: nextActive })
@@ -229,7 +230,7 @@ const Admin = () => {
 
     const updateMentorStatus = async (mentorId, status) => {
         try {
-            const res = await fetch(`/mentor/${encodeURIComponent(mentorId)}/status`, {
+            const res = await fetch(`${API_BASE_URL}/mentor/${encodeURIComponent(mentorId)}/status`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status })
@@ -251,7 +252,7 @@ const Admin = () => {
     const deleteMentor = async (mentorId) => {
         if (!window.confirm('Delete this mentor?')) return;
         try {
-            const res = await fetch(`/mentor/${encodeURIComponent(mentorId)}`, { method: 'DELETE' });
+            const res = await fetch(`${API_BASE_URL}/mentor/${encodeURIComponent(mentorId)}`, { method: 'DELETE' });
             if (res.ok) {
                 setMentors(prev => prev.filter(m => m._id !== mentorId));
             } else {
@@ -613,7 +614,7 @@ const Admin = () => {
             return;
         }
         try {
-            const url = editingInterview ? `/interview/${editingInterview._id}/update` : '/interview';
+            const url = editingInterview ? `${API_BASE_URL}/interview/${editingInterview._id}/update` : `${API_BASE_URL}/interview`;
             const method = editingInterview ? 'PUT' : 'POST';
             const sanitizedData = {
                 company: formData.company.trim(),
@@ -662,7 +663,7 @@ const Admin = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this interview?')) {
             try {
-                const response = await fetch(`/interview/${id}`, { method: 'DELETE' });
+                const response = await fetch(`${API_BASE_URL}/interview/${id}`, { method: 'DELETE' });
                 if (response.ok) {
                     fetchInterviews();
                     alert('Interview deleted successfully!');
@@ -780,7 +781,7 @@ const Admin = () => {
         }
 
         try {
-            const response = await fetch('/mentor', {
+            const response = await fetch(`${API_BASE_URL}/mentor`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(mentorFormData)
@@ -1047,7 +1048,7 @@ const Admin = () => {
                                             const ids = newContacts.map(n=>n._id);
                                             setNewContacts([]);
                                             ids.forEach(async (id)=>{
-                                                try { await fetch(`http://localhost:5000/api/contacts/${id}/status`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ status:'in_progress' }) }); } catch {}
+                                                try { await fetch(`${API_BASE_URL}/api/contacts/${id}/status`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ status:'in_progress' }) }); } catch {}
                                             });
                                             setNotificationsOpen(false);
                                         }}>Mark all read</button>
@@ -1058,7 +1059,7 @@ const Admin = () => {
                                         <div style={{ maxHeight: 360, overflowY: 'auto' }}>
                                             {newContacts.slice(0,8).map((c)=> (
                                                 <button key={c._id} className="dropdown-item" onClick={async ()=>{
-                                                    try { await fetch(`http://localhost:5000/api/contacts/${c._id}/status`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ status:'in_progress' }) }); } catch {}
+                                                    try { await fetch(`${API_BASE_URL}/api/contacts/${c._id}/status`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ status:'in_progress' }) }); } catch {}
                                                     setNewContacts(prev => prev.filter(x => x._id !== c._id));
                                                     setActiveSection('contacts');
                                                     setNotificationsOpen(false);

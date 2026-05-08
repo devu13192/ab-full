@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AIFeedback.css';
+import API_BASE_URL from '../../apiConfig';
 
 const AIFeedback = ({ interviewId, questions, answers, company, position, interviewType }) => {
   const [feedback, setFeedback] = useState(null);
@@ -12,7 +13,7 @@ const AIFeedback = ({ interviewId, questions, answers, company, position, interv
     setError(null);
     
     try {
-      const response = await axios.post('http://localhost:5000/interview-feedback', {
+      const response = await axios.post(`${API_BASE_URL}/interview-feedback`, {
         interviewData: {
           interviewId,
           type: interviewType || 'General',

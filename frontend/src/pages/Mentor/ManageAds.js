@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../../context/AuthContext';
 import './Mentor.css';
+import API_BASE_URL from '../../apiConfig';
 import NewMessageNotifier from '../../components/Chat/NewMessageNotifier';
 
 const ManageAds = () => {
@@ -43,7 +44,7 @@ const ManageAds = () => {
 
     const fetchAds = async () => {
         try {
-            const res = await fetch('/ads/all');
+            const res = await fetch(`${API_BASE_URL}/ads/all`);
             if (res.ok) {
                 const list = await res.json();
                 setAds(list || []);
@@ -443,7 +444,7 @@ const ManageAds = () => {
         if (!adImageFile) return adForm.imageUrl;
         const form = new FormData();
         form.append('file', adImageFile);
-        const res = await fetch('/ads/upload', { method: 'POST', body: form });
+        const res = await fetch(`${API_BASE_URL}/ads/upload`, { method: 'POST', body: form });
         if (!res.ok) throw new Error('Upload failed');
         const data = await res.json();
         return data.url;
@@ -488,7 +489,7 @@ const ManageAds = () => {
             const url = editingAd ? `/ads/${editingAd._id}` : '/ads';
             const method = editingAd ? 'PUT' : 'POST';
 
-            const res = await fetch(url, {
+            const res = await fetch(`${API_BASE_URL}${url}`, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(adData)
@@ -538,7 +539,7 @@ const ManageAds = () => {
         if (!window.confirm('Are you sure you want to delete this ad?')) return;
         
         try {
-            const res = await fetch(`/ads/${id}`, { method: 'DELETE' });
+            const res = await fetch(`${API_BASE_URL}/ads/${id}`, { method: 'DELETE' });
             if (res.ok) {
                 setAds(prev => prev.filter(a => a._id !== id));
                 showToast('Ad deleted successfully', 'success');
@@ -553,7 +554,7 @@ const ManageAds = () => {
 
     const toggleAdStatus = async (id, currentStatus) => {
         try {
-            const res = await fetch(`/ads/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/ads/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ active: !currentStatus })

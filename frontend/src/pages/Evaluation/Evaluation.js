@@ -3,6 +3,7 @@ import ProfessionalNavbar from '../../components/Navbar/ProfessionalNavbar';
 import { UserAuth } from '../../context/AuthContext';
 import './Evaluation.css';
 import axios from 'axios';
+import API_BASE_URL from '../../apiConfig';
 import Footer from '../../components/Footer/Footer';
 import UserIterview from '../../components/UserInterview/UserInterview';
 import LoadingComponent from '../../components/LoadingComponent/LoadingComponent';
@@ -17,7 +18,7 @@ const Evaluation = () => {
   useEffect(() => {
     const fetchUserInterviews = async () => {
       try {
-        const response = await axios.get(`/userInterview/${user.uid}`);
+        const response = await axios.get(`${API_BASE_URL}/userInterview/${user.uid}`);
         setInterviews(response.data);
       } catch (error) {
         console.error('Error fetching user interviews:', error);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../../context/AuthContext';
 import './Mentor.css';
+import API_BASE_URL from '../../apiConfig';
 import NewMessageNotifier from '../../components/Chat/NewMessageNotifier';
 
 const MentorNoticePage = () => {
@@ -29,7 +30,7 @@ const MentorNoticePage = () => {
     const fetchAds = async () => {
         try {
             setLoading(true);
-            const res = await fetch('/ads');
+            const res = await fetch(`${API_BASE_URL}/ads`);
             if (res.ok) {
                 const data = await res.json();
                 setAds(Array.isArray(data) ? data : []);

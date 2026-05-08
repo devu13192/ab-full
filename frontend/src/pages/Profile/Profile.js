@@ -5,6 +5,7 @@ import { UserAuth} from '../../context/AuthContext';
 import {  useNavigate } from 'react-router-dom'
 import Footer from '../../components/Footer/Footer';
 import axios from 'axios';
+import API_BASE_URL from '../../apiConfig';
 import { updateProfile } from 'firebase/auth';
 import { auth } from '../../firebase/firebase';
 import { Edit, Check, Close } from '@mui/icons-material';
@@ -62,7 +63,7 @@ const Profile = () => {
 useEffect(()=>{
   if(user?.uid) {
     // Fetch user data
-  axios.get(`/user/${user.uid}`).then((response)=>{
+   axios.get(`${API_BASE_URL}/user/${user.uid}`).then((response)=>{
     setUserData(response.data)
     setLoading(false)
   }).catch((err)=>{
@@ -71,7 +72,7 @@ useEffect(()=>{
   })
 
     // Fetch user interviews
-  axios.get(`/userInterview/${user.uid}`).then((response)=>{
+   axios.get(`${API_BASE_URL}/userInterview/${user.uid}`).then((response)=>{
       const interviews = response.data
       console.log('Fetched interviews:', interviews) // Debug log
       setInterviewCount(interviews.length)

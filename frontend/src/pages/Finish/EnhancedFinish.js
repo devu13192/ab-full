@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import './Finish.css';
+import API_BASE_URL from '../../apiConfig';
 import { UserAuth } from '../../context/AuthContext';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AIFeedback from '../../components/AIFeedback/AIFeedback';
@@ -86,7 +87,7 @@ const EnhancedFinish = () => {
   useEffect(() => {
     const fetchInterviewData = async () => {
       try {
-        const response = await axios.get(`/interview/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/interview/${id}`);
         setIntDetails(response.data);
         setIsIntDetailsSet(true);
         console.log('Fetched interview details:', response.data);
@@ -123,7 +124,7 @@ const EnhancedFinish = () => {
 
       const sendUserInterviewData = async () => {
         try {
-          await axios.post(`/userInterview`, uintData);
+          await axios.post(`${API_BASE_URL}/userInterview`, uintData);
           setIntDetails((prevState) => ({
             ...prevState,
             sent: true,
@@ -138,7 +139,7 @@ const EnhancedFinish = () => {
       
       const updateScore = async () => {
         try {
-          await axios.patch(`/user/score/${user.uid}`, score)
+          await axios.patch(`${API_BASE_URL}/user/score/${user.uid}`, score)
         } catch (error) {
           console.log(error);
         }
