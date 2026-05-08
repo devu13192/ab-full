@@ -21,7 +21,7 @@ export default function NewMessageNotifier(){
         if (!user?.email) return;
         // Ensure single socket instance
         if (!socketRef.current) {
-            socketRef.current = io(getBackendUrl(), { transports: ['websocket','polling'] });
+            socketRef.current = io(getSocketUrl(), { transports: ['websocket','polling'] });
         }
         const socket = socketRef.current;
         const email = (user.email||'').toLowerCase();

@@ -23,7 +23,7 @@ export default function MentorChatPanel(){
 	useEffect(() => {
 		if (!mentorEmail) return;
 		const load = () => {
-			fetch('/chat/conversations')
+			fetch(`${API_BASE_URL}/chat/conversations`)
 				.then(r => r.json())
 				.then(list => {
 					const sorted = (list || []).slice().sort((a,b) => new Date(b.lastAt||0) - new Date(a.lastAt||0));
@@ -39,7 +39,7 @@ export default function MentorChatPanel(){
 	// Load user directory once to map emails -> { name, photoURL }
 	useEffect(() => {
 		let cancelled = false;
-		fetch('/user')
+		fetch(`${API_BASE_URL}/user`)
 			.then(r => r.ok ? r.json() : [])
 			.then(list => {
 				if (cancelled) return;
@@ -62,7 +62,7 @@ export default function MentorChatPanel(){
     useEffect(() => {
         if (!mentorEmail) return;
         if (!socketRef.current) {
-            socketRef.current = io(getBackendUrl(), { transports: ['websocket','polling'] });
+            socketRef.current = io(getSocketUrl(), { transports: ['websocket','polling'] });
         }
         const socket = socketRef.current;
         socket.emit('join', { roomId: `mentor:${mentorEmail}`, userEmail: mentorEmail });
@@ -107,7 +107,7 @@ export default function MentorChatPanel(){
 					{filtered.map(conv => (
 						<button key={conv.roomId} className={`conversation-item ${active?.roomId===conv.roomId?'active':''}`} onClick={async ()=>{
 							setActive(conv);
-							try{ await axios.post('/chat/read', { roomId: conv.roomId, mentorEmail }); } catch {}
+							try{ await axios.post(`${API_BASE_URL}/chat/read`, { roomId: conv.roomId, mentorEmail }); } catch {}
 							// Clear unread count locally for immediate UX
 							setConversations(prev => prev.map(c => c.roomId === conv.roomId ? { ...c, unreadCount: 0 } : c));
 						}}>

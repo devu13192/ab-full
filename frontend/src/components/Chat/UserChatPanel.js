@@ -21,7 +21,7 @@ export default function UserChatPanel(){
 	const socketRef = useRef(null);
 
 	useEffect(() => {
-		fetch('/mentor')
+		fetch(`${API_BASE_URL}/mentor`)
 			.then(r => r.ok ? r.json() : [])
 			.then(list => {
 				const first = Array.isArray(list) && list.length ? list[0] : null;
@@ -34,7 +34,7 @@ export default function UserChatPanel(){
 	useEffect(() => {
 		if (!roomId) return;
 		// load last message preview
-		fetch(`/chat/history/${encodeURIComponent(roomId)}?limit=1`)
+		fetch(`${API_BASE_URL}/chat/history/${encodeURIComponent(roomId)}?limit=1`)
 			.then(r=>r.json())
 			.then(list => {
 				const m = (list||[])[0];
@@ -46,7 +46,7 @@ export default function UserChatPanel(){
 	// Realtime updates for preview; do not auto-open
 	useEffect(() => {
 		if (!roomId) return;
-		if (!socketRef.current) socketRef.current = io(getBackendUrl(), { transports: ['websocket','polling'] });
+		if (!socketRef.current) socketRef.current = io(getSocketUrl(), { transports: ['websocket','polling'] });
 		const socket = socketRef.current;
 		socket.emit('join', { roomId, userEmail });
 		const onMessage = (m) => {

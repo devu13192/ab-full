@@ -16,7 +16,7 @@ import {
 	Audiotrack
 } from '@mui/icons-material';
 
-const getBackendUrl = () => {
+const getSocketUrl = () => {
     return API_BASE_URL;
 };
 
@@ -35,14 +35,14 @@ export default function ChatWindow({ roomId, peerLabel, recipientEmail }){
 	const [audioChunks, setAudioChunks] = useState([]);
 	const tempIdRef = useRef(0);
 
-	const socket = useMemo(() => io(getBackendUrl(), { transports: ['websocket', 'polling'] }), []);
+	const socket = useMemo(() => io(getSocketUrl(), { transports: ['websocket', 'polling'] }), []);
 
 	const resolveFileUrl = (url) => {
 		try {
 			if (!url) return url;
 			if (/^https?:\/\//i.test(url)) return url;
-			// Ensure files are loaded from backend origin (port 5000 in dev)
-			return `${getBackendUrl()}${url.startsWith('/') ? url : `/${url}`}`;
+			// Ensure files are loaded from backend origin
+			return `${getSocketUrl()}${url.startsWith('/') ? url : `/${url}`}`;
 		} catch {
 			return url;
 		}

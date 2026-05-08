@@ -15,7 +15,7 @@ export default function MentorChatPage(){
 	const navigate = useNavigate();
 	const [unread, setUnread] = useState(0);
 	const [sidebarOpen, setSidebarOpen] = useState(false);
-	const socket = useMemo(() => io(getBackendUrl(), { transports: ['websocket','polling'] }), []);
+	const socket = useMemo(() => io(getSocketUrl(), { transports: ['websocket','polling'] }), []);
 
 	useEffect(() => {
 		if (!user?.email) return;
