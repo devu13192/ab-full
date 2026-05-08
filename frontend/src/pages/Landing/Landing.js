@@ -9,14 +9,9 @@ import {
   Analytics,
   Security,
   PlayArrow,
-  Star,
   TrendingUp,
-  People,
   School,
-  Work,
   CheckCircle,
-  Speed,
-  AutoAwesome,
   BusinessCenter
 } from '@mui/icons-material'
 
@@ -39,7 +34,7 @@ const Landing = () => {
     }, 2000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [taglines.length]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -61,19 +56,6 @@ const Landing = () => {
       transition: {
         duration: 0.8,
         ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    }
-  }
-
-  const floatingVariants = {
-    hidden: { opacity: 0, y: 20, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
       }
     }
   }
@@ -142,7 +124,7 @@ const Landing = () => {
           animate="visible"
           variants={containerVariants}
         >
-          <img className="section-photo" src="/p6.jpg" alt="" loading="lazy" />
+          <div className="section-photo" style={{ backgroundImage: "url('/p6.jpg')" }} loading="lazy" />
           <div className="hero-background">
             <div className="hero-gradient"></div>
             <div className="hero-particles"></div>
@@ -333,7 +315,7 @@ const Landing = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <img className="section-photo" src="/p1.jpg" alt="" loading="lazy" />
+          <div className="section-photo" style={{ backgroundImage: "url('/p1.jpg')" }} loading="lazy" />
           <div className="benefits-container">
             <h2 className="section-title" style={{ color: 'black' }}>Perfect for Amal Jyothi College Students</h2>
             <div className="benefits-grid">
@@ -373,7 +355,7 @@ const Landing = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <img className="section-photo" src="/p2.jpg" alt="" loading="lazy" />
+          <div className="section-photo" style={{ backgroundImage: "url('/p2.jpg')" }} loading="lazy" />
           <div className="how-container">
             <h2 className="section-title" style={{ color: 'black' }}>How EIRA Helps Amal Jyothi Students</h2>
             <p className="section-subtitle">A simple, effective process designed specifically for engineering students preparing for campus placements.</p>
@@ -414,7 +396,7 @@ const Landing = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <img className="section-photo" src="/p5.jpg" alt="" loading="lazy" />
+          <div className="section-photo" style={{ backgroundImage: "url('/p5.jpg')" }} loading="lazy" />
           <div className="features-container">
             <motion.div
               className="features-header"
@@ -481,7 +463,7 @@ const Landing = () => {
 
         {/* Comparison Section */}
         <section className="compare-section snap">
-          <img className="section-photo" src="/p4.jpg" alt="" loading="lazy" />
+          <div className="section-photo" style={{ backgroundImage: "url('/p4.jpg')" }} loading="lazy" />
           <div className="compare-container">
             <h2 className="section-title" style={{ color: 'black' }}>Why Amal Jyothi Students Choose EIRA</h2>
             <p className="section-subtitle">Discover how our AI-powered platform gives you the edge in campus placement interviews.</p>
@@ -522,7 +504,7 @@ const Landing = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <img className="section-photo" src="/p5.jpg" alt="" loading="lazy" />
+          <div className="section-photo" style={{ backgroundImage: "url('/p5.jpg')" }} />
           <div className="footer-container">
             <div className="footer-content">
               <div className="footer-brand">

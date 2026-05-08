@@ -3,7 +3,6 @@ import ProfessionalNavbar from '../../components/Navbar/ProfessionalNavbar'
 import "./Profile.css"
 import { UserAuth} from '../../context/AuthContext';
 import {  useNavigate } from 'react-router-dom'
-import LoadingComponent from '../../components/LoadingComponent/LoadingComponent';
 import Footer from '../../components/Footer/Footer';
 import axios from 'axios';
 import { updateProfile } from 'firebase/auth';
@@ -16,8 +15,6 @@ import {
     Star,
     PlayArrow,
     History,
-    Settings,
-    Logout,
     Email,
     CalendarToday,
     Timeline,
@@ -35,15 +32,12 @@ const Profile = () => {
   const [pageSize] = useState(5)
   const [averageScore,setAverageScore] = useState(0)
   const [totalQuestions,setTotalQuestions] = useState(0)
-  const [showOnlyPassing, setShowOnlyPassing] = useState(false)
   const [monthlyScoreChange, setMonthlyScoreChange] = useState(0)
   const [weeklyInterviewChange, setWeeklyInterviewChange] = useState(0)
   const [dailyQuestionChange, setDailyQuestionChange] = useState(0)
   const [technicalSkillsScore, setTechnicalSkillsScore] = useState(0)
   const [communicationScore, setCommunicationScore] = useState(0)
   const [userSkills, setUserSkills] = useState([])
-  const [skillCategories, setSkillCategories] = useState({})
-  const [performanceInsights, setPerformanceInsights] = useState({})
   const [achievementBadges, setAchievementBadges] = useState([])
   const [weakAreas, setWeakAreas] = useState([])
   const [strengths, setStrengths] = useState([])
@@ -56,13 +50,7 @@ const Profile = () => {
   const [uploadError, setUploadError] = useState('')
   const [imageError, setImageError] = useState(false)
 
-  const handleLogout = async ()=>{
-      try {
-        await logout();
-    } catch (error) {
-        console.log(error);
-    }
-  }
+
 
   useEffect(()=>{
     if(user == null){
@@ -208,8 +196,8 @@ useEffect(()=>{
       console.log(err);
     })
   }
-  document.title = 'Dashboard'
-},[user?.uid])
+    document.title = 'Dashboard'
+  }, [user?.uid, calculateSkillsAndInsights]);
 
   const getScoreColor = (score) => {
     if(score >= 80) return '#10B981' // Green
@@ -231,7 +219,7 @@ useEffect(()=>{
   }
 
   // Calculate skills and insights from real interview data
-  const calculateSkillsAndInsights = (interviews, avgScore) => {
+  const calculateSkillsAndInsights = React.useCallback((interviews, avgScore) => {
     if (interviews.length === 0) return
 
     // Extract skills from interview roles and topics
@@ -242,7 +230,6 @@ useEffect(()=>{
     interviews.forEach(interview => {
       const score = interview.score || interview.totalScore || interview.finalScore || 0
       const role = interview.role || ''
-      const company = interview.company || ''
       const topics = interview.topics || []
       
       // Categorize by role type
@@ -264,7 +251,7 @@ useEffect(()=>{
       performanceData.push({
         score,
         role,
-        company,
+        company: interview.company || '',
         date: new Date(interview.createdAt || Date.now()),
         category: roleCategory
       })
@@ -275,10 +262,6 @@ useEffect(()=>{
       .map(([skill, data]) => ({ skill, ...data }))
       .sort((a, b) => b.avgScore - a.avgScore)
 
-    const categories = Array.from(categoryMap.entries())
-      .map(([category, count]) => ({ category, count }))
-      .sort((a, b) => b.count - a.count)
-
     // Calculate insights
     const insights = calculatePerformanceInsights(performanceData, avgScore)
     
@@ -286,12 +269,10 @@ useEffect(()=>{
     const badges = generateAchievementBadges(interviews, avgScore, skills)
 
     setUserSkills(skills)
-    setSkillCategories(categories)
-    setPerformanceInsights(insights)
     setAchievementBadges(badges)
     setWeakAreas(insights.weakAreas || [])
     setStrengths(insights.strengths || [])
-  }
+  }, []);
 
   const categorizeRole = (role) => {
     const roleLower = role.toLowerCase()

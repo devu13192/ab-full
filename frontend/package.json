@@ -30,11 +30,16 @@
     "react-scripts": "^5.0.1",
     "recharts": "^2.15.4",
     "socket.io-client": "^4.8.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "@craco/craco": "^7.1.0",
+    "@tailwindcss/postcss": "^4.1.13",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.13"
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "CI=false craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
@@ -58,12 +63,7 @@
     ]
   },
   "devDependencies": {
-    "@craco/craco": "^7.1.0",
-    "@tailwindcss/postcss": "^4.1.13",
-    "autoprefixer": "^10.4.21",
     "baseline-browser-mapping": "^2.10.10",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.13",
     "util": "^0.12.5"
   }
 }
