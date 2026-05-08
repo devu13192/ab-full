@@ -36,6 +36,27 @@ app.get('/ping', (req, res) => {
     return res.status(204).send()
 })
 
+// Database debug endpoint
+app.get('/debug/db', async (req, res) => {
+    try {
+        const dbName = mongoose.connection.name;
+        const collections = await mongoose.connection.db.listCollections().toArray();
+        const counts = {};
+        
+        for (const col of collections) {
+            counts[col.name] = await mongoose.connection.db.collection(col.name).countDocuments();
+        }
+        
+        res.json({
+            status: 'connected',
+            database: dbName,
+            collections: counts
+        });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+});
+
 // Simple download test that streams N bytes
 app.get('/download-test', (req, res) => {
     const sizeParam = parseInt(req.query.size, 10)
