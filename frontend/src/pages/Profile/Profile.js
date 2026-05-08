@@ -32,6 +32,7 @@ const Profile = () => {
   const [pageSize] = useState(5)
   const [averageScore,setAverageScore] = useState(0)
   const [totalQuestions,setTotalQuestions] = useState(0)
+  const [showOnlyPassing, setShowOnlyPassing] = useState(false)
   const [monthlyScoreChange, setMonthlyScoreChange] = useState(0)
   const [weeklyInterviewChange, setWeeklyInterviewChange] = useState(0)
   const [dailyQuestionChange, setDailyQuestionChange] = useState(0)
